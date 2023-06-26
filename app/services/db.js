@@ -37,6 +37,10 @@ class Db {
        return products
     }
 
+    async selectTgUsers(tgUsersId) {
+        const categories = await TgUsers.findAll({});
+    }
+
     async insertTgUsers(tgUsersId) {
         const userBot = await TgUsers.create({
             tg_id: tgUsersId

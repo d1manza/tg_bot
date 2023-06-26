@@ -9,9 +9,9 @@ class Tg {
 
     async register() {
         const bot = new TelegramBot(config.tg.token, { polling: true });
-        const abc = await bot.onText(/\/register/, async (msg, match) => {
-            //Добавить проверку на уже зарегестрированного
-            await db.insertTgUsers(msg.chat.id);
+        await bot.onText(/\/register/, async (msg, match) => {
+            const tgUserId = await db.insertTgUsers(msg.chat.id);
+            console.log(`User with was registered in the bot. TgId: ${tgUserId}`);
         });
     }
 
