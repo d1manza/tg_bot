@@ -23,6 +23,14 @@ const TgUsers = sequelize.define('tg_users', {
         type: DataTypes.DATE,
         allowNull: true
     },
+    login: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    }
 }, {});
 
 module.exports = TgUsers;

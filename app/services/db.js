@@ -34,19 +34,28 @@ class Db {
                 nest: true
             }
         );
-       return products
+        return products
     }
 
     async selectTgUsers(tgUsersId) {
-        const categories = await TgUsers.findAll({});
+        const userIdTgBot = await TgUsers.findOne({
+            where: {tg_id: tgUsersId, deletedAt: null}
+        });
+        if (userIdTgBot) {
+            return true
+        } else {
+            return false
+        }
     }
 
-    async insertTgUsers(tgUsersId) {
-        const userBot = await TgUsers.create({
-            tg_id: tgUsersId
+    async createTgUsers(tgUsersId, login, password) {
+        const userIdTgBot = await TgUsers.create({
+            tg_id: tgUsersId,
+            login: login,
+            password: password
         });
-        if (userBot.tg_id) {
-            return userBot.tg_id
+        if (userIdTgBot.tg_id) {
+            return userIdTgBot.tg_id
         } else {
             return false
         }

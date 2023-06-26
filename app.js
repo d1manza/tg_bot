@@ -4,9 +4,7 @@ const Tg = require('./app/services/tg');
 const tg = new Tg();
 
 async function run() {
-    //const parsing_url = await db.selectParsingUrl();
-    const registered = await tg.register();
-
+    const register = await tg.register();
 }
 
 run();
