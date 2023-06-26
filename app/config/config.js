@@ -10,9 +10,12 @@ const config = {
     db: {
         host: 'localhost',
         port: 5432,
-        name: 'xxx',
-        user: 'xxx',
-        password: 'xxx'
+        name: 'parser',
+        user: 'postgres',
+        password: 'bitopsystem'
+    },
+    tg: {
+        token: 'xxx'
     }
 };
 
