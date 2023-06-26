@@ -37,13 +37,17 @@ class Db {
         return products
     }
 
-    async selectTgUsers(tgUsersId) {
+    async getInfoFromTgId(tgUsersId) {
         const userIdTgBot = await TgUsers.findOne({
+            raw: true,
+            attributes: ['id', 'tg_id', 'login', 'password'],
             where: {tg_id: tgUsersId, deletedAt: null}
         });
         if (userIdTgBot) {
-            return true
+            console.log(userIdTgBot);
+            return userIdTgBot
         } else {
+            console.log(123);
             return false
         }
     }

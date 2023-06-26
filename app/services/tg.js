@@ -14,7 +14,7 @@ class Tg {
         const bot = new TelegramBot(config.tg.token, {polling: true});
         await bot.onText(/\/register/, async (msg, match) => {
             const chatId = msg.chat.id;
-            const userIdTgBot = await db.selectTgUsers(chatId);
+            const userIdTgBot = await db.getInfoFromTgId(chatId);
             if (userIdTgBot) {
                 console.log(`User with id: ${chatId}, already been registered in the bot`);
                 await bot.sendMessage(chatId, 'Вы уже зарегистрированы в боте!');
@@ -29,7 +29,7 @@ class Tg {
         });
         await bot.onText(/\/unregister/, async (msg, match) => {
             const chatId = msg.chat.id;
-            const userIdTgBot = await db.selectTgUsers(chatId);
+            const userIdTgBot = await db.getInfoFromTgId(chatId);
             if (!userIdTgBot) {
                 console.log(`User with id: ${chatId}, not registered in the bot`);
                 await bot.sendMessage(chatId, 'Вы не зарегистрированы в боте!');
@@ -39,7 +39,16 @@ class Tg {
                 await bot.sendMessage(chatId, `Вы отключились от рассылки топовых акций :(`);
             }
         });
-
+        await bot.onText(/\/remind/, async (msg, match) => {
+            const chatId = msg.chat.id;
+            const userIdTgBot = await db.getInfoFromTgId(chatId);
+            if (!userIdTgBot) {
+                console.log(`User with id: ${chatId}, not registered in the bot`);
+                await bot.sendMessage(chatId, 'Вы не зарегистрированы в боте!');
+            } else {
+                await bot.sendMessage(chatId, `Ваш логин: ${userIdTgBot.login}\nВаш пароль: ${userIdTgBot.password}`);
+            }
+        });
     }
 
     async sendProductList(productList) {
