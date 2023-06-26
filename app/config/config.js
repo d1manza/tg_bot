@@ -11,7 +11,6 @@ const config = {
         host: 'localhost',
         port: 5432,
         name: 'xxx',
-
         user: 'xxx',
         password: 'xxx'
     }
