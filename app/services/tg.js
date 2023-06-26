@@ -10,13 +10,13 @@ class Tg {
     constructor() {
     }
 
-    async register() {
+    async start() {
         const bot = new TelegramBot(config.tg.token, {polling: true});
         await bot.onText(/\/register/, async (msg, match) => {
             const chatId = msg.chat.id;
             const userIdTgBot = await db.selectTgUsers(chatId);
             if (userIdTgBot) {
-                console.log(`User with id: ${userIdTgBot}, already been registered in the bot`);
+                console.log(`User with id: ${chatId}, already been registered in the bot`);
                 await bot.sendMessage(chatId, 'Вы уже зарегистрированы в боте!');
             } else {
                 const login = await shared.generateLogin(chatId);
@@ -27,6 +27,19 @@ class Tg {
                 await bot.sendMessage(chatId, `Для просмотра большего количества скидок, Вы можете перейти на сайт ${config.website.url}\nВаш логин: ${login}\nВаш пароль: ${password}`);
             }
         });
+        await bot.onText(/\/unregister/, async (msg, match) => {
+            const chatId = msg.chat.id;
+            const userIdTgBot = await db.selectTgUsers(chatId);
+            if (!userIdTgBot) {
+                console.log(`User with id: ${chatId}, not registered in the bot`);
+                await bot.sendMessage(chatId, 'Вы не зарегистрированы в боте!');
+            } else {
+                const tgUserId = await db.deleteTgUsers(chatId);
+                console.log(`User with was unregistered in the bot. Id: ${chatId}`);
+                await bot.sendMessage(chatId, `Вы отключились от рассылки топовых акций :(`);
+            }
+        });
+
     }
 
     async sendProductList(productList) {

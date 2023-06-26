@@ -61,6 +61,20 @@ class Db {
         }
     }
 
+    async deleteTgUsers(tgUsersId) {
+        const userIdTgBot = await TgUsers.update({deletedAt: sequelize.fn('NOW')}, {
+            where: {
+                tg_id: tgUsersId,
+                deletedAt: null
+            }
+        });
+        if (userIdTgBot) {
+            return userIdTgBot
+        } else {
+            return false
+        }
+    }
+
 }
 
 module.exports = Db;

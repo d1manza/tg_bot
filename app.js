@@ -4,7 +4,7 @@ const Tg = require('./app/services/tg');
 const tg = new Tg();
 
 async function run() {
-    const register = await tg.register();
+    await tg.start();
 }
 
 run();
