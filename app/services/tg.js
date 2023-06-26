@@ -1,5 +1,7 @@
 const config = require('../config/config');
-const TelegramBot = require('node-telegram-bot-api')
+const TelegramBot = require('node-telegram-bot-api');
+const Db = require('./db');
+const db = new Db();
 
 class Tg {
     constructor() {
@@ -7,10 +9,9 @@ class Tg {
 
     async register() {
         const bot = new TelegramBot(config.tg.token, { polling: true });
-        bot.onText(/\/register/, (msg, match) => {
-            const chatId = msg.chat.id
-            console.log(chatId);
-            bot.sendMessage(chatId, 'Done.')
+        const abc = await bot.onText(/\/register/, async (msg, match) => {
+            //Добавить проверку на уже зарегестрированного
+            await db.insertTgUsers(msg.chat.id);
         });
     }
 

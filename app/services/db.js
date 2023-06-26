@@ -1,5 +1,6 @@
 const config = require('../config/config');
 const {Sequelize} = require('sequelize');
+const TgUsers = require('../model/tgUsers');
 const sequelize = new Sequelize(`postgres://${config.db.user}:${config.db.password}@${config.db.host}:${config.db.port}/${config.db.name}`, {
     logging: false
 });
@@ -34,6 +35,17 @@ class Db {
             }
         );
        return products
+    }
+
+    async insertTgUsers(tgUsersId) {
+        const userBot = await TgUsers.create({
+            tg_id: tgUsersId
+        });
+        if (userBot.tg_id) {
+            return userBot.tg_id
+        } else {
+            return false
+        }
     }
 
 }
