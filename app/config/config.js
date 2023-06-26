@@ -8,7 +8,7 @@ function getEnv(name, defaults) {
 
 const config = {
     db: {
-        host: 'localhost',
+        host: '192.168.65.50',
         port: 5432,
         name: 'xxx',
         user: 'xxx',
@@ -16,6 +16,13 @@ const config = {
     },
     tg: {
         token: 'xxx'
+    },
+    website: {
+        url: 'yandex.ru'
+    },
+    generating: {
+        prefixLogin: 'sbermegamarketbot-',
+        lengthPassword: 8
     }
 };
 
