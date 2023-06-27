@@ -62,7 +62,7 @@ class Tg {
             const getInfoFromTgId = await db.getInfoFromTgId(chatId);
             if (getInfoFromTgId) {
                 console.log(`Remind login and password user with id: ${chatId}`);
-                await bot.sendMessage(chatId, `Ваш логин: ${userIdTgBot.login}\nВаш пароль: ${userIdTgBot.password}`);
+                await bot.sendMessage(chatId, `Ваш логин: ${getInfoFromTgId.login}\nВаш пароль: ${getInfoFromTgId.password}`);
             } else {
                 console.log(`User with id: ${chatId}, not registered in the bot`);
                 await bot.sendMessage(chatId, 'Вы не зарегистрированы :(');
