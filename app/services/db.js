@@ -41,7 +41,6 @@ class Db {
             id_users: id_users,
             id_rights: rights_id
         });
-        console.log(rightsUsers);
         if (rightsUsers) {
             return rightsUsers
         } else {
@@ -50,14 +49,28 @@ class Db {
     }
 
     async deleteTgUsers(tgUsersId) {
-        const userIdTgBot = await TgUsers.update({deletedAt: sequelize.fn('NOW')}, {
+        const user = await TgUsers.update({deletedAt: sequelize.fn('NOW')}, {
             where: {
                 tg_id: tgUsersId,
                 deletedAt: null
             }
         });
-        if (userIdTgBot) {
-            return userIdTgBot
+        if (user) {
+            return user
+        } else {
+            return false
+        }
+    }
+
+    async deleteUsersRights(id_users) {
+        const rightsUsers = await TgUsersRights.update({deletedAt: sequelize.fn('NOW')}, {
+            where: {
+                id_users: id_users,
+                deletedAt: null
+            }
+        });
+        if (rightsUsers) {
+            return true
         } else {
             return false
         }
