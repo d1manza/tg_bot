@@ -15,7 +15,7 @@ const config = {
         password: 'bitopsystem'
     },
     tg: {
-        token: '6020383410:AAG-HTWRv0glOvWCg5grMK-JkjkSQYmRj9Y'
+        token: 'xxx'
     },
     website: {
         url: 'yandex.ru'
