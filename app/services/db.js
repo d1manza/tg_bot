@@ -1,6 +1,7 @@
 const config = require('../config/config');
 const {Sequelize} = require('sequelize');
 const TgUsers = require('../model/tgUsers');
+const TgUsersRights = require('../model/tgUsersRights');
 const sequelize = new Sequelize(`postgres://${config.db.user}:${config.db.password}@${config.db.host}:${config.db.port}/${config.db.name}`, {
     logging: false
 });
@@ -23,13 +24,26 @@ class Db {
     }
 
     async createTgUsers(tgUsersId, login, password) {
-        const userIdTgBot = await TgUsers.create({
+        const user = await TgUsers.create({
             tg_id: tgUsersId,
             login: login,
             password: password
         });
-        if (userIdTgBot.tg_id) {
-            return userIdTgBot.tg_id
+        if (user) {
+            return user
+        } else {
+            return false
+        }
+    }
+
+    async createUsersRights(id_users, rights_id) {
+        const rightsUsers = await TgUsersRights.create({
+            id_users: id_users,
+            id_rights: rights_id
+        });
+        console.log(rightsUsers);
+        if (rightsUsers) {
+            return rightsUsers
         } else {
             return false
         }
