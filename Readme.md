@@ -32,5 +32,8 @@ website: {
 generating: {
         prefixLogin: 'sbermegamarketbot-', //prefix login in system
         lengthPassword: 8 //length password
-    }
+    },
+rights: {
+    id_users: 1 //users rights_id
+}
 ```
