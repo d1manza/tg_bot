@@ -4,6 +4,30 @@ const sequelize = new Sequelize(`postgres://${config.db.user}:${config.db.passwo
     logging: false
 });
 
+/*-- auto-generated definition
+create table parsing_urls
+(
+    id            serial
+constraint parsing_url_pk
+primary key,
+    name          varchar,
+    cost          integer,
+    cashback      integer,
+    url           varchar                                not null,
+    "createdAt"   timestamp with time zone default now() not null,
+    "updatedAt"   timestamp with time zone default now() not null,
+    categories_id integer                                not null
+constraint parsing_urls_categories_id_fk
+references categories,
+    "deletedAt"   timestamp with time zone
+);
+
+alter table parsing_urls
+owner to postgres;
+
+create unique index parsing_url_id_uindex
+on parsing_urls (id);*/
+
 const ParsingUrls = sequelize.define('parsing_urls', {
     name: {
         type: DataTypes.STRING,

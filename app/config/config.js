@@ -8,14 +8,14 @@ function getEnv(name, defaults) {
 
 const config = {
     db: {
-        host: '192.168.65.50',
+        host: 'localhost',
         port: 5432,
-        name: 'xxx',
-        user: 'xxx',
-        password: 'xxx'
+        name: 'parser',
+        user: 'postgres',
+        password: 'bitopsystem'
     },
     tg: {
-        token: 'xxx'
+        token: '6020383410:AAG-HTWRv0glOvWCg5grMK-JkjkSQYmRj9Y'
     },
     website: {
         url: 'yandex.ru'

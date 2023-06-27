@@ -4,6 +4,22 @@ const sequelize = new Sequelize(`postgres://${config.db.user}:${config.db.passwo
     logging: false
 });
 
+/*-- auto-generated definition
+create table tg_users
+(
+    id          serial,
+    tg_id       integer                                not null,
+    "createdAt" timestamp with time zone default now() not null,
+    "updatedAt" timestamp with time zone default now() not null,
+    "deletedAt" timestamp with time zone
+);
+
+alter table tg_users
+owner to postgres;
+
+create unique index tg_users_id_uindex
+on tg_users (id);*/
+
 const TgUsers = sequelize.define('tg_users', {
     tg_id: {
         type: DataTypes.NUMBER,

@@ -50,6 +50,12 @@ class Tg {
                 await bot.sendMessage(chatId, `Ваш логин: ${userIdTgBot.login}\nВаш пароль: ${userIdTgBot.password}`);
             }
         });
+
+        await bot.onText(/\/help/, async (msg, match) => {
+            const chatId = msg.chat.id;
+            await bot.sendMessage(chatId, `Зарегестрироваться /register \nОтключиться /unregister \nНапомнить логин и пароль /remind \nПомощь /help`,{'parse_mode': 'html'});
+        });
+
     }
 
 }
