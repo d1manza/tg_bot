@@ -56,6 +56,11 @@ class Tg {
             await bot.sendMessage(chatId, `Зарегестрироваться /register \nОтключиться /unregister \nНапомнить логин и пароль /remind \nПомощь /help`,{'parse_mode': 'html'});
         });
 
+        await bot.onText(/\/start/, async (msg, match) => {
+            const chatId = msg.chat.id;
+            await bot.sendMessage(chatId, `Зарегестрироваться /register \nОтключиться /unregister \nНапомнить логин и пароль /remind \nПомощь /help`,{'parse_mode': 'html'});
+        });
+
     }
 
 }
