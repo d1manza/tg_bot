@@ -5,22 +5,25 @@ const sequelize = new Sequelize(`postgres://${config.db.user}:${config.db.passwo
 });
 
 /*-- auto-generated definition
-create table tg_users
+create table tg_users_rights
 (
-    id          serial,
-    tg_id       integer                                                not null,
-    "createdAt" timestamp with time zone default now()                 not null,
-    "updatedAt" timestamp with time zone default now()                 not null,
+    id_users    integer                                not null
+        constraint tg_users_rights_tg_users_id_fk
+            references tg_users (id),
+    id_rights   integer                                not null
+        constraint tg_users_rights_rights_id_fk
+            references rights,
+    "createdAt" timestamp with time zone default now() not null,
+    "updatedAt" timestamp with time zone default now(),
     "deletedAt" timestamp with time zone,
-    login       varchar                  default ''::character varying not null,
-    password    varchar                  default ''::character varying not null
+    id          serial
 );
 
-alter table tg_users
-owner to postgres;
+alter table tg_users_rights
+    owner to postgres;
 
-create unique index tg_users_id_uindex
-on tg_users (id);*/
+create unique index tg_users_rights_id_uindex
+    on tg_users_rights (id);*/
 
 const TgUsersRights = sequelize.define('tg_users_rights', {
     id_users: {

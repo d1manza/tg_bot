@@ -6,14 +6,29 @@ class Shared {
     }
 
     async generateLogin(tgUsersId) {
-        return `${config.generating.prefixLogin}${tgUsersId}`
+        try {
+
+            const login = `${config.generating.prefixLogin}${tgUsersId}`
+            return login
+        } catch {
+            return false
+        }
     }
 
     async generatePassword() {
-        const password = await generator.generate({
-            length: 8
-        });
-        return password
+        try {
+            const password = generator.generate({
+                length: config.generating.lengthPassword
+            });
+            return password
+        } catch {
+            return false
+        }
+    }
+
+    async logging(funcName, status, message) {
+        const date = new Date();
+        console.log(`[${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()} ${date.toLocaleTimeString()}] - Function: ${funcName}. Status: ${status}. Message: ${message}`);
     }
 
 }
