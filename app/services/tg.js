@@ -30,7 +30,7 @@ class Tg {
                             const createUsersRights = await db.createUsersRights(createTgUsers.id, config.rights.id_users);
                             if (createUsersRights) {
                                 shared.logging('createUsersRights', 'successfully', `Rights for user with tg id: ${chatId} created`);
-                                return await this.pushMessageTg(`Регистрация прошла успешно! \nДля просмотра большего количества акций, Вы можете перейти на сайт <b>${config.website.url}</b>\nВаш логин: <b>${login}</b>>\nВаш пароль: <b>${password}</b>`, chatId);
+                                return await this.pushMessageTg(`Регистрация прошла успешно! \nДля просмотра большего количества акций, Вы можете перейти на сайт <b>${config.website.url}</b>\nВаш логин: <b>${login}</b>>\nВаш пароль: <b>${password}</b>`, chatId, bot);
                             } else {
                                 shared.logging('createUsersRights', 'error', `Rights for user with tg id: ${chatId} not created`);
                                 return false
@@ -49,7 +49,7 @@ class Tg {
                 }
             } else {
                 shared.logging('getInfoFromTgId', 'successfully', `user with tg id: ${chatId} already exists`);
-                return await this.pushMessageTg('Вы уже зарегистрированы :)', chatId);
+                return await this.pushMessageTg('Вы уже зарегистрированы :)', chatId, bot);
             }
         });
 
@@ -99,13 +99,13 @@ class Tg {
 
     }
 
-    async pushMessageTg(message, chatId) {
+    async pushMessageTg(message, chatId, bot) {
         try {
-            shared.logging('pushMessage', 'successfully', `message ___${message}___ delivered to user - ${chatId}`);
-            bot.sendMessage(chatId, `${message}`, {'parse_mode': 'html'});
+            await shared.logging('pushMessage', 'successfully', `message ___${message}___ delivered to user - ${chatId}`);
+            await bot.sendMessage(chatId, `${message}`, {'parse_mode': 'html'});
             return true
         } catch {
-            shared.logging('pushMessage', 'successfully', `message ___${message}___ not delivered to user - ${chatId}`);
+            await shared.logging('pushMessage', 'successfully', `message ___${message}___ not delivered to user - ${chatId}`);
             return false
         }
     }
