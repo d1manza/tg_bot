@@ -11,92 +11,106 @@ class Tg {
     }
 
     async start() {
-        const bot = new TelegramBot(config.tg.token, {polling: true});
-        await bot.onText(/\/register/, async (msg, match) => {
-            const chatId = msg.chat.id;
-            const getInfoFromTgId = await db.getInfoFromTgId(chatId);
-            if (getInfoFromTgId === 2) {
-                return false
-            } else if (getInfoFromTgId === 1) {
-                const login = await shared.generateLogin(chatId);
-                if (login) {
-                    shared.logging('generateLogin', 'successfully', `user with tg id: ${chatId} generated login`);
-                    const password = await shared.generatePassword();
-                    if (password) {
-                        shared.logging('generatePassword', 'successfully', `user with tg id: ${chatId} generated password`);
-                        const createTgUsers = await db.createTgUsers(chatId, login, password);
-                        if (createTgUsers) {
-                            shared.logging('createTgUsers', 'successfully', `user with tg id: ${chatId} created`);
-                            const createUsersRights = await db.createUsersRights(createTgUsers.id, config.rights.id_users);
-                            if (createUsersRights) {
-                                shared.logging('createUsersRights', 'successfully', `Rights for user with tg id: ${chatId} created`);
-                                return await this.pushMessageTg(`Регистрация прошла успешно! \nДля просмотра большего количества акций, Вы можете перейти на сайт <b>${config.website.url}</b>\nВаш логин: <b>${login}</b>>\nВаш пароль: <b>${password}</b>`, chatId, bot);
+        try {
+            const bot = new TelegramBot(config.tg.token, {polling: true});
+            await bot.onText(/\/register/, async (msg, match) => {
+                const chatId = msg.chat.id;
+                const getInfoFromTgId = await db.getInfoFromTgId(chatId);
+                if (getInfoFromTgId === 2) {
+                    shared.logging('getInfoFromTgId', 'error', `database connection error`);
+                    return false
+                } else if (getInfoFromTgId === 1) {
+                    shared.logging('getInfoFromTgId', 'successfully', `information from user with tg id: ${chatId} not received`);
+                    const login = await shared.generateLogin(chatId);
+                    if (login) {
+                        shared.logging('generateLogin', 'successfully', `user with tg id: ${chatId} generated login`);
+                        const password = await shared.generatePassword();
+                        if (password) {
+                            shared.logging('generatePassword', 'successfully', `user with tg id: ${chatId} generated password`);
+                            const createTgUsers = await db.createTgUsers(chatId, login, password);
+                            if (createTgUsers) {
+                                shared.logging('createTgUsers', 'successfully', `user with tg id: ${chatId} created`);
+                                const createUsersRights = await db.createUsersRights(createTgUsers.id, config.rights.id_users);
+                                if (createUsersRights) {
+                                    shared.logging('createUsersRights', 'successfully', `Rights for user with tg id: ${chatId} created`);
+                                    return await this.pushMessageTg(`Регистрация прошла успешно! \nДля просмотра большего количества акций, Вы можете перейти на сайт <b>${config.website.url}</b>\nВаш логин: <b>${login}</b>>\nВаш пароль: <b>${password}</b>`, chatId, bot);
+                                } else {
+                                    shared.logging('createUsersRights', 'error', `database connection error`);
+                                    return false
+                                }
                             } else {
-                                shared.logging('createUsersRights', 'error', `Rights for user with tg id: ${chatId} not created`);
+                                shared.logging('createTgUsers', 'error', `database connection error`);
                                 return false
                             }
                         } else {
-                            shared.logging('createTgUsers', 'error', `user with tg id: ${chatId} not created`);
+                            shared.logging('generatePassword', 'error', `user with tg id: ${chatId} not generated password`);
                             return false
                         }
                     } else {
-                        shared.logging('generatePassword', 'error', `user with tg id: ${chatId} not generated password`);
+                        shared.logging('generateLogin', 'error', `user with tg id: ${chatId} not generated login`);
                         return false
                     }
                 } else {
-                    shared.logging('generateLogin', 'error', `user with tg id: ${chatId} not generated login`);
+                    shared.logging('getInfoFromTgId', 'successfully', `user with tg id: ${chatId} already exists`);
+                    return await this.pushMessageTg('Вы уже зарегистрированы :)', chatId, bot);
+                }
+            });
+            await bot.onText(/\/unregister/, async (msg, match) => {
+                const chatId = msg.chat.id;
+                const getInfoFromTgId = await db.getInfoFromTgId(chatId);
+                if (getInfoFromTgId === 2) {
+                    shared.logging('getInfoFromTgId', 'error', `database connection error`);
                     return false
-                }
-            } else {
-                shared.logging('getInfoFromTgId', 'successfully', `user with tg id: ${chatId} already exists`);
-                return await this.pushMessageTg('Вы уже зарегистрированы :)', chatId, bot);
-            }
-        });
-
-
-        await bot.onText(/\/unregister/, async (msg, match) => {
-            const chatId = msg.chat.id;
-            const getInfoFromTgId = await db.getInfoFromTgId(chatId);
-            if (getInfoFromTgId) {
-                const deleteTgUsers = await db.deleteTgUsers(chatId);
-                if (deleteTgUsers) {
-                    const deleteUsersRights = await db.deleteUsersRights(getInfoFromTgId.id);
-                    if (deleteUsersRights) {
-                        console.log(`User with was unregistered in the bot. Id: ${chatId}`);
-                        await bot.sendMessage(chatId, `Вы отключились от рассылки топовых акций :(`);
-                    } else {
-                        console.log(`Function: deleteUsersRights. Error unregistration in the bot. Id: ${chatId}`);
-                    }
+                } else if (getInfoFromTgId === 1) {
+                    shared.logging('getInfoFromTgId', 'successfully', `information from user with tg id: ${chatId} not received`);
+                    return await this.pushMessageTg('Вы не зарегистрированы :(', chatId, bot);
                 } else {
-                    console.log(`Function: deleteTgUsers. Error unregistration in the bot. Id: ${chatId}`);
+                    shared.logging('getInfoFromTgId', 'successfully', `information from user with tg id: ${chatId} received`);
+                    const deleteTgUsers = await db.deleteTgUsers(chatId);
+                    if (deleteTgUsers) {
+                        shared.logging('deleteTgUsers', 'successfully', `user with tg id: ${chatId} removed`);
+                        const deleteUsersRights = await db.deleteUsersRights(getInfoFromTgId.id);
+                        if (deleteUsersRights) {
+                            shared.logging('deleteUsersRights', 'successfully', `userRights with tg id: ${chatId} removed`);
+                            return await this.pushMessageTg('Вы отписались от рассылки :(', chatId, bot);
+                        } else {
+                            shared.logging('deleteUsersRights', 'error', `database connection error`);
+                            return false
+                        }
+                    } else {
+                        shared.logging('deleteTgUsers', 'error', `database connection error`);
+                        return false
+                    }
                 }
-            } else {
-                console.log(`User with id: ${chatId}, not registered in the bot`);
-                await bot.sendMessage(chatId, 'Вы не зарегистрированы :(');
-            }
-        });
-        await bot.onText(/\/remind/, async (msg, match) => {
-            const chatId = msg.chat.id;
-            const getInfoFromTgId = await db.getInfoFromTgId(chatId);
-            if (getInfoFromTgId) {
-                console.log(`Remind login and password user with id: ${chatId}`);
-                await bot.sendMessage(chatId, `Ваш логин: ${getInfoFromTgId.login}\nВаш пароль: ${getInfoFromTgId.password}`);
-            } else {
-                console.log(`User with id: ${chatId}, not registered in the bot`);
-                await bot.sendMessage(chatId, 'Вы не зарегистрированы :(');
-            }
-        });
+            });
+            await bot.onText(/\/remind/, async (msg, match) => {
+                const chatId = msg.chat.id;
+                const getInfoFromTgId = await db.getInfoFromTgId(chatId);
+                if (getInfoFromTgId === 2) {
+                    shared.logging('getInfoFromTgId', 'error', `database connection error`);
+                    return false
+                } else if (getInfoFromTgId === 1) {
+                    shared.logging('getInfoFromTgId', 'successfully', `information from user with tg id: ${chatId} not received`);
+                    return await this.pushMessageTg('Вы не зарегистрированы :(', chatId, bot);
+                } else {
+                    shared.logging('getInfoFromTgId', 'successfully', `information from user with tg id: ${chatId} received`);
+                    return await this.pushMessageTg(`Ваш логин: <b>${getInfoFromTgId.login}</b>\nВаш пароль: <b>${getInfoFromTgId.password}</b>`, chatId, bot);
+                }
+            });
 
-        await bot.onText(/\/help/, async (msg, match) => {
-            const chatId = msg.chat.id;
-            await bot.sendMessage(chatId, `Зарегестрироваться /register \nОтключиться /unregister \nНапомнить логин и пароль /remind \nПомощь /help`, {'parse_mode': 'html'});
-        });
+            await bot.onText(/\/help/, async (msg, match) => {
+                const chatId = msg.chat.id;
+                return await this.pushMessageTg(`Зарегистрироваться: /register \nОтключиться: /unregister \nНапомнить логин и пароль: /remind \nПомощь: /help`, chatId, bot);
+            });
 
-        await bot.onText(/\/start/, async (msg, match) => {
-            const chatId = msg.chat.id;
-            await bot.sendMessage(chatId, `Зарегестрироваться /register \nОтключиться /unregister \nНапомнить логин и пароль /remind \nПомощь /help`, {'parse_mode': 'html'});
-        });
-
+            await bot.onText(/\/start/, async (msg, match) => {
+                const chatId = msg.chat.id;
+                return await this.pushMessageTg(`Зарегистрироваться: /register \nОтключиться: /unregister \nНапомнить логин и пароль: /remind \nПомощь: /help`, chatId, bot);
+            });
+            return true
+        } catch {
+            return false
+        }
     }
 
     async pushMessageTg(message, chatId, bot) {
@@ -109,7 +123,6 @@ class Tg {
             return false
         }
     }
-
 }
 
 module.exports = Tg;
