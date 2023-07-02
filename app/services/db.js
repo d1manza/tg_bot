@@ -11,67 +11,87 @@ class Db {
     }
 
     async getInfoFromTgId(tgUsersId) {
-        const userIdTgBot = await TgUsers.findOne({
-            raw: true,
-            attributes: ['id', 'tg_id', 'login', 'password'],
-            where: {tg_id: tgUsersId, deletedAt: null}
-        });
-        if (userIdTgBot) {
-            return userIdTgBot
-        } else {
-            return false
+        try {
+            const userIdTgBot = await TgUsers.findOne({
+                raw: true,
+                attributes: ['id', 'tg_id', 'login', 'password'],
+                where: {tg_id: tgUsersId, deletedAt: null}
+            });
+            if (userIdTgBot) {
+                return userIdTgBot
+            } else {
+                return 1
+            }
+        } catch {
+            return 2
         }
     }
 
     async createTgUsers(tgUsersId, login, password) {
-        const user = await TgUsers.create({
-            tg_id: tgUsersId,
-            login: login,
-            password: password
-        });
-        if (user) {
-            return user
-        } else {
-            return false
-        }
-    }
-
-    async createUsersRights(id_users, rights_id) {
-        const rightsUsers = await TgUsersRights.create({
-            id_users: id_users,
-            id_rights: rights_id
-        });
-        if (rightsUsers) {
-            return rightsUsers
-        } else {
+        try {
+            const user = await TgUsers.create({
+                tg_id: tgUsersId,
+                login: login,
+                password: password
+            });
+            if (user) {
+                return user
+            } else {
+                return false
+            }
+        } catch {
             return false
         }
     }
 
     async deleteTgUsers(tgUsersId) {
-        const user = await TgUsers.update({deletedAt: sequelize.fn('NOW')}, {
-            where: {
-                tg_id: tgUsersId,
-                deletedAt: null
+        try {
+            const user = await TgUsers.update({deletedAt: sequelize.fn('NOW')}, {
+                where: {
+                    tg_id: tgUsersId,
+                    deletedAt: null
+                }
+            });
+            if (user) {
+                return user
+            } else {
+                return false
             }
-        });
-        if (user) {
-            return user
-        } else {
+        } catch {
+            return false
+        }
+    }
+
+    async createUsersRights(id_users, rights_id) {
+        try {
+            const rightsUsers = await TgUsersRights.create({
+                id_users: id_users,
+                id_rights: rights_id
+            });
+            if (rightsUsers) {
+                return rightsUsers
+            } else {
+                return false
+            }
+        } catch {
             return false
         }
     }
 
     async deleteUsersRights(id_users) {
-        const rightsUsers = await TgUsersRights.update({deletedAt: sequelize.fn('NOW')}, {
-            where: {
-                id_users: id_users,
-                deletedAt: null
+        try {
+            const rightsUsers = await TgUsersRights.update({deletedAt: sequelize.fn('NOW')}, {
+                where: {
+                    id_users: id_users,
+                    deletedAt: null
+                }
+            });
+            if (rightsUsers) {
+                return true
+            } else {
+                return false
             }
-        });
-        if (rightsUsers) {
-            return true
-        } else {
+        } catch {
             return false
         }
     }

@@ -1,10 +1,17 @@
-const Db = require('./app/services/db');
-const db = new Db();
 const Tg = require('./app/services/tg');
 const tg = new Tg();
+const Shared = require('./app/services/shared');
+const shared = new Shared();
 
 async function run() {
-    await tg.start();
+    await shared.logging('start', 'start work', `start tg bot`);
+    const go = await tg.start();
+    if (!go) {
+        await shared.logging('start', 'error', `start tg bot`);
+        await run();
+    } else {
+        await shared.logging('start', 'successfully', `start was successful`);
+    }
 }
 
 run();
